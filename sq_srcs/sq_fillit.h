@@ -17,10 +17,20 @@
 
 typedef	struct	te_list
 {
-	char	**s;
+	char	**str;
 	char	letter;
+	int		x;
+	int		y;
 	struct	te_list	*next;
+	struct	te_list *pre;
 }				tetri_list;
+
+typedef	struct	t_map
+{
+	char	**map;
+	int		size;
+	struct	t_map	*add_map;
+}				tetri_map;
 
 void	ft_exit(char const *s);
 tetri_list	*ft_readfile(char const *file_name);

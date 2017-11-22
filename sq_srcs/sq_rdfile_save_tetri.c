@@ -62,9 +62,9 @@ void	valid_tetri(char *s)
 	i = 0;
 	while (i < BUFF_SIZE)
 	{
-		if (s[i] = '#')
+		if (s[i] == '#')
 		{
-			if (i + 4 < BUFF_SIZE && s[i + 4] == '#')
+			if (i + 5 < BUFF_SIZE && s[i + 5] == '#')
 				touch_count++;
 			if (i != 3 && i != 8 && i != 13 && i != 18)
 			{
@@ -72,8 +72,9 @@ void	valid_tetri(char *s)
 					touch_count++;
 			}
 		}
+		i++;
 	}
-	if (touch_count != 3 && touch != 4)
+	if (touch_count != 3 && touch_count != 4)
 		ft_exit("not valid file");
 }
 
@@ -83,34 +84,44 @@ void  mv_left_top(char **s)
 	int		j;
 	int		x;
 	int		y;
-	int		test;
 
 	x = 0;
 	y = -1;
-	while (!ft_strchr(s[x],'#')
-			x++;
-	while ( y < 4 && )
+	i = -1;
+	while (!ft_strchr(s[x],'#'))
+		x++;
+	while ( s[x][y] != '#' && ++y < 4)
 	{
 		x = 0;
 		while (x < 4 && s[x][y] != '#')
 			x++;
+	}
+	while (++i < 4)
+	{
+		j = -1;
+		while (++j < 4)
+		{
+			if(s[i][j] == '#')
+				ft_swap(&s[i][j], &s[i - x][j - y]);
 		}
+	}
 }
 
-
-tetri_list	*add_tetri(unsigned short value, int nb, tetri_list *old_list)
+tetri_list	*add_tetri(char **s, int nb, tetri_list *old_list)
 {
 	tetri_list	*list;
 	tetri_list	*temp;
 
 	if(!(list = (tetri_list *)malloc(sizeof(*list))))
 		return (NULL);
-	list->tetri_value = value;
+	if(!(list->str = (char **)malloc(sizeof(char *) * 5)))
+		return (NULL);
+	list->str = s;
 	list->letter = 'A' + nb;
-	list->length = 0;
-	list->height = 0;
+	list->x = 0;
+	list->y = 0;
 	list->next = NULL;
-	mv_left_top_calcu(list);
+	list->pre = NULL;
 	if(!old_list)
 		old_list = list;
 	else 
@@ -118,6 +129,7 @@ tetri_list	*add_tetri(unsigned short value, int nb, tetri_list *old_list)
 		temp = old_list;
 		while (temp->next)
 			temp = temp->next;
+		list->pre = temp;
 		temp->next = list;
 	}
 	return (old_list);
@@ -125,11 +137,11 @@ tetri_list	*add_tetri(unsigned short value, int nb, tetri_list *old_list)
 
 tetri_list	*ft_readfile(char const *file_name)
 {
-	char				*buff;
-	int				fd;
-	unsigned	short	value_tetri;
-	int				nb_tetri;
-	tetri_list		*list;
+	char		*buff;
+	int			fd;
+	char		**s;
+	int			nb_tetri;
+	tetri_list	*list;
 
 	nb_tetri = 0;
 	list = NULL;
@@ -143,41 +155,13 @@ tetri_list	*ft_readfile(char const *file_name)
 		if (nb_tetri > 25)
 			ft_exit("maxi tetri is 26");
 		only_dot_hash(buff,BUFF_SIZE);
-		value_tetri = tetri_value(buff, BUFF_SIZE);
-		valid_tetri(value_tetri);
-		list = add_tetri(value_tetri, nb_tetri, list);
+		valid_tetri(buff);
+		s = ft_strsplit((char const *)buff, '\n');
+		mv_left_top(s);
+		list = add_tetri(s, nb_tetri, list);
 		nb_tetri++;
 		ft_bzero(buff, BUFF_SIZE);
 	}
 	return (list);
 }
 
-/*
-   int	main(void)
-   {
-   char *s="....\n...#\n..##\n...#\n\n";
-   only_dot_hash(s, 21);
-   unsigned short t = tetri_value(s, 21);
-   valid_tetri(t);
-   int i = 15;
-   while (i >= 0)
-   {
-   if (t & ( 1 << i))
-   printf("1");
-   else
-   printf("0");
-   i--;
-   }
-   printf("\n");
-   t = mv_left_top(t);
-   i = 15;
-   while (i >= 0)
-   {
-   if (t & ( 1 << i))
-   printf("1");
-   else
-   printf("0");
-   i--;
-   }
-   }
-   */
