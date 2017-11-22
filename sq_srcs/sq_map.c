@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 11:15:35 by saxiao            #+#    #+#             */
-/*   Updated: 2017/11/22 12:22:26 by saxiao           ###   ########.fr       */
+/*   Updated: 2017/11/22 15:27:59 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int		check_fill(char **map, int mpsize, tetri_list *list, int x, int y)
 
 int		find_fit(char **map, int mpsize, tetri_list *list, int x, int y)
 {
-	ft_putendl("does enter here 55555");
+	ft_putendl("find fit");
 	while ( x  < mpsize)
 	{
 		while (y < mpsize)
@@ -89,6 +89,9 @@ int		find_fit(char **map, int mpsize, tetri_list *list, int x, int y)
 			{
 				list->x = x;
 				list->y = y;
+				ft_putstr("find a place for");
+				ft_putchar(list->letter);
+				ft_putendl("");
 				return (1);
 			}
 			y++;
@@ -96,12 +99,17 @@ int		find_fit(char **map, int mpsize, tetri_list *list, int x, int y)
 		x++;
 		y = 0;
 	}
+	ft_putstr("DID NOT find a place for");
+	ft_putchar(list->letter);
+	ft_putendl("");
 	return (0);
 }
 
 
 void	fill_map(char **map, tetri_list *list, int x, int y)
 {
+	ft_putchar(list->letter);
+	ft_putendl("");
 	int		i;
 	int		j;
 
@@ -132,7 +140,9 @@ void	remove_onete(char **map, int mpsize, char c)
 		{
 			if (map[i][j] == c)
 				map[i][j] = '.';
+			j++;
 		}
+		i++;
 	}
 }
 
@@ -148,8 +158,8 @@ void	print_map(char **map, int size)
 			ft_putchar(map[i][j]);
 			j++;
 		}
-	ft_putendl("");
-	i++;
+		ft_putendl("");
+		i++;
 	}
 }
 
@@ -158,21 +168,17 @@ int		solve_map(tetri_map *map, tetri_list *list, int x, int y)
 	tetri_list *head;
 
 	head = list;
-	ft_putstr("00000011222223333");
 	while (list)
 	{
 		if (!find_fit(map->map, map->size, list, x, y))
 		{
-			ft_putstr("here does work");
 			list->x = 0;
 			list->y = 0;
 			if (list->letter == 'A')
 				return solve_map(new_map(map->size + 1),head, head->x, head->y);
 			remove_onete(map->map, map->size, list->pre->letter);
-
 			return (solve_map(map, list->pre, list->pre->x, list->pre->y + 1));
 		}
-		ft_putstr("enter here or not ?????\n");
 		fill_map(map->map, list, list->x, list->y);
 		print_map(map->map, map->size);
 		list = list->next;
@@ -206,40 +212,15 @@ int		main(int ac, char **av)
 		ft_exit("not valid file number");
 
 	list = ft_readfile(av[1]);
-	n_map = new_map(4);
-	int i = 0;
-	int j = 0;
-	while (i < 4)
-	{
-		j = 0;
-		while (j < 4)
-		{
-			ft_putchar(n_map->map[i][j]);
-			j++;
-		}
-		ft_putendl("");
-		i++;
-	}
+	n_map = new_map(mini_sq(list));
+
 	printf("%d%d\n", list->x, list->y);
 	//int k = check_fill(n_map->map, 4, list, list->x, list->y);
 	//ft_putstr("not problem1111100000");
 	int p =solve_map(n_map,list, list->x, list->y);
 	printf("2222220000");
+	p++;
 
-
-	int	a = 0;
-	int	b = 0;
-	while (a < n_map->size)
-	{
-		b = 0;
-		while (b < n_map->size)
-		{
-			printf("%c",n_map->map[i][j]);
-			b++;
-		}
-		printf("\n");
-		a++;
-	}
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 09:03:21 by saxiao            #+#    #+#             */
-/*   Updated: 2017/11/21 17:40:11 by saxiao           ###   ########.fr       */
+/*   Updated: 2017/11/22 15:27:35 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,25 +84,33 @@ void  mv_left_top(char **s)
 	int		j;
 	int		x;
 	int		y;
+	int		k;
 
 	x = 0;
-	y = -1;
+	y = 0;
+	k = 0;
 	i = -1;
-	while (!ft_strchr(s[x],'#'))
-		x++;
-	while ( s[x][y] != '#' && ++y < 4)
+	while (!ft_strchr(s[k],'#'))
+		k++;
+	x = 0;
+	while ( y < 4 && s[x][y] != '#')
 	{
 		x = 0;
 		while (x < 4 && s[x][y] != '#')
 			x++;
+		if (s[x][y] != '#')
+		y++;
 	}
+	ft_putnbr(k);
+	ft_putnbr(y);
+	ft_putendl("");
 	while (++i < 4)
 	{
 		j = -1;
 		while (++j < 4)
 		{
 			if(s[i][j] == '#')
-				ft_swap(&s[i][j], &s[i - x][j - y]);
+				ft_swap(&s[i][j], &s[i - k][j - y]);
 		}
 	}
 }
@@ -152,6 +160,7 @@ tetri_list	*ft_readfile(char const *file_name)
 		return (NULL);
 	while (read(fd, buff, BUFF_SIZE))
 	{
+		ft_putendl("here12312333333333333333");
 		if (nb_tetri > 25)
 			ft_exit("maxi tetri is 26");
 		only_dot_hash(buff,BUFF_SIZE);
