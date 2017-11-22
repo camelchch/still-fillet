@@ -24,7 +24,7 @@ int		mini_sq(tetri_list *list)
 	temp = list;
 	while (temp->next)
 		temp = temp->next;
-	while ( i * i <= (temp->letter - 'A' + 1) * 4)
+	while ( i * i < (temp->letter - 'A' + 1) * 4)
 		i++;
 	return (i);
 }
@@ -68,7 +68,7 @@ int		check_fill(char **map, int mpsize, tetri_list *list, int x, int y)
 			{
 				if (x + i >= mpsize || y + j >= mpsize) 
 					return (0); 
-				ft_putnbr(mpsize);
+				//ft_putnbr(mpsize);
 				if (map[x + i][y + j] != '.')
 					return (0);
 			}
@@ -80,7 +80,7 @@ int		check_fill(char **map, int mpsize, tetri_list *list, int x, int y)
 
 int		find_fit(char **map, int mpsize, tetri_list *list, int x, int y)
 {
-	ft_putendl("find fit");
+	//ft_putendl("find fit");
 	while ( x  < mpsize)
 	{
 		while (y < mpsize)
@@ -89,9 +89,9 @@ int		find_fit(char **map, int mpsize, tetri_list *list, int x, int y)
 			{
 				list->x = x;
 				list->y = y;
-				ft_putstr("find a place for");
-				ft_putchar(list->letter);
-				ft_putendl("");
+				//ft_putstr("find a place for");
+				//ft_putchar(list->letter);
+				//ft_putendl("");
 				return (1);
 			}
 			y++;
@@ -99,17 +99,17 @@ int		find_fit(char **map, int mpsize, tetri_list *list, int x, int y)
 		x++;
 		y = 0;
 	}
-	ft_putstr("DID NOT find a place for");
-	ft_putchar(list->letter);
-	ft_putendl("");
+	//ft_putstr("DID NOT find a place for");
+	//ft_putchar(list->letter);
+	//ft_putendl("");
 	return (0);
 }
 
 
 void	fill_map(char **map, tetri_list *list, int x, int y)
 {
-	ft_putchar(list->letter);
-	ft_putendl("");
+//	ft_putchar(list->letter);
+//	ft_putendl("");
 	int		i;
 	int		j;
 
@@ -163,12 +163,12 @@ void	print_map(char **map, int size)
 	}
 }
 
-int		solve_map(tetri_map *map, tetri_list *list, int x, int y)
+void		solve_map(tetri_map *map, tetri_list *list, int x, int y)
 {
 	tetri_list *head;
 
 	head = list;
-	while (list)
+	if (list)
 	{
 		if (!find_fit(map->map, map->size, list, x, y))
 		{
@@ -180,28 +180,16 @@ int		solve_map(tetri_map *map, tetri_list *list, int x, int y)
 			return (solve_map(map, list->pre, list->pre->x, list->pre->y + 1));
 		}
 		fill_map(map->map, list, list->x, list->y);
-		print_map(map->map, map->size);
-		list = list->next;
+		//print_map(map->map, map->size);
+		if (!list->next)
+		return ;
+		printf("next %c\n", list->next->letter);
+		return (solve_map(map, list->next, list->next->x, list->next->y));
+		//print_map(map->map, map->size);
+	//	else
 	}
-	return (1);
+	return ;
 }
-
-
-/*
-   int		fit_map(short int *map, int size_map, tetri_list *list)
-   {
-   int		x;
-   int		y;
-
-   x = 0;
-   y = 0;
-   while (x < size_map - list->length)
-   {
-   while (y < size_map - list->heigt)
-   {
-   if 
-   */
-
 
 int		main(int ac, char **av)
 {
@@ -210,17 +198,12 @@ int		main(int ac, char **av)
 
 	if(ac != 2)
 		ft_exit("not valid file number");
-
 	list = ft_readfile(av[1]);
 	n_map = new_map(mini_sq(list));
-
-	printf("%d%d\n", list->x, list->y);
 	//int k = check_fill(n_map->map, 4, list, list->x, list->y);
 	//ft_putstr("not problem1111100000");
-	int p =solve_map(n_map,list, list->x, list->y);
-	printf("2222220000");
-	p++;
-
+	solve_map(n_map,list, list->x, list->y);
+	//printf("2222220000");
+		print_map(n_map->map, n_map->size);
 	return (0);
 }
-

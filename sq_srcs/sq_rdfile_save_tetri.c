@@ -78,32 +78,42 @@ void	valid_tetri(char *s)
 		ft_exit("not valid file");
 }
 
+int		empty_col(char **s)
+{
+	int		x;
+	int		y;
+
+	y = 0;
+	while ( y < 4)
+	{
+		x = 0;
+		while (x < 4)
+		{
+			if (s[x][y] == '#')
+			return (y);
+				x++;
+		}
+			y++;
+}
+return (y);
+}
+
 void  mv_left_top(char **s)
 {
 	int		i;
 	int		j;
-	int		x;
 	int		y;
 	int		k;
 
-	x = 0;
-	y = 0;
 	k = 0;
 	i = -1;
+	y = empty_col(s);
 	while (!ft_strchr(s[k],'#'))
 		k++;
-	x = 0;
-	while ( y < 4 && s[x][y] != '#')
-	{
-		x = 0;
-		while (x < 4 && s[x][y] != '#')
-			x++;
-		if (s[x][y] != '#')
-		y++;
-	}
-	ft_putnbr(k);
-	ft_putnbr(y);
-	ft_putendl("");
+//	ft_putendl("inside left_top ");
+//	ft_putnbr(k);
+//	ft_putnbr(y);
+//	ft_putendl("");
 	while (++i < 4)
 	{
 		j = -1;
@@ -160,17 +170,21 @@ tetri_list	*ft_readfile(char const *file_name)
 		return (NULL);
 	while (read(fd, buff, BUFF_SIZE))
 	{
-		ft_putendl("here12312333333333333333");
+//		ft_putendl("here12312333333333333333");
 		if (nb_tetri > 25)
 			ft_exit("maxi tetri is 26");
 		only_dot_hash(buff,BUFF_SIZE);
+//		ft_putendl("only_dot_hash");
 		valid_tetri(buff);
+//		ft_putendl("valid_tetri");
 		s = ft_strsplit((char const *)buff, '\n');
+//		ft_putendl("after split");
 		mv_left_top(s);
+//		ft_putendl("mv_left_top");
 		list = add_tetri(s, nb_tetri, list);
+//		ft_putendl("add_tetri");
 		nb_tetri++;
 		ft_bzero(buff, BUFF_SIZE);
 	}
 	return (list);
 }
-
