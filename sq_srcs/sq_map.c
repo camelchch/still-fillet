@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 11:15:35 by saxiao            #+#    #+#             */
-/*   Updated: 2017/11/21 09:55:23 by saxiao           ###   ########.fr       */
+/*   Updated: 2017/11/22 12:22:26 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,15 @@ tetri_map	*new_map(int size)
 	tetri_map	*newmap;
 
 	i = -1;
-	j = -1;
 	if (!(newmap = (tetri_map *)malloc(sizeof(*newmap))))
 		return (NULL);
 	if(!(newmap->map = (char **)malloc(sizeof(char *) * size)))
 		return (NULL);
-	if(!(*(newmap->map) = (char *)malloc(sizeof(char) * size)))
-		return (NULL);
 	while (++i < size)
 	{
+		if(!((newmap->map)[i] = (char *)malloc(sizeof(char) * size)))
+			return (NULL);
+		j = -1;
 		while(++j < size)
 			(newmap->map)[i][j] = '.';
 	}
@@ -66,7 +66,10 @@ int		check_fill(char **map, int mpsize, tetri_list *list, int x, int y)
 		{
 			if((list->str)[i][j] == '#')
 			{
-				if (x + i >= mpsize || y + j >= mpsize || map[x + i][y + j] != '.')
+				if (x + i >= mpsize || y + j >= mpsize) 
+					return (0); 
+				ft_putnbr(mpsize);
+				if (map[x + i][y + j] != '.')
 					return (0);
 			}
 			j++;
@@ -77,23 +80,21 @@ int		check_fill(char **map, int mpsize, tetri_list *list, int x, int y)
 
 int		find_fit(char **map, int mpsize, tetri_list *list, int x, int y)
 {
-	int		i;
-	int		j;
-
-	i = x;
-	j = y;
-	while (!check_fill(map, mpsize, list, i, j) && i < mpsize)
+	ft_putendl("does enter here 55555");
+	while ( x  < mpsize)
 	{
-		j = 0;
-		while (!check_fill(map, mpsize,list, i, j) && j < mpsize)
-			j++;
-		i++;
-	}
-	if (i < mpsize)
-	{
-		list->x = i;
-		list->y = j;
-		return (1);
+		while (y < mpsize)
+		{
+			if (check_fill(map, mpsize, list, x, y))
+			{
+				list->x = x;
+				list->y = y;
+				return (1);
+			}
+			y++;
+		}
+		x++;
+		y = 0;
 	}
 	return (0);
 }
@@ -135,32 +136,49 @@ void	remove_onete(char **map, int mpsize, char c)
 	}
 }
 
-void		solve_map(tetri_map *map, tetri_list *list, int x, int y)
+void	print_map(char **map, int size)
+{
+	int i = 0;
+	int j = 0;
+	while (i < size)
+	{
+		j = 0;
+		while (j < size)
+		{
+			ft_putchar(map[i][j]);
+			j++;
+		}
+	ft_putendl("");
+	i++;
+	}
+}
+
+int		solve_map(tetri_map *map, tetri_list *list, int x, int y)
 {
 	tetri_list *head;
 
 	head = list;
-	printf("00000011222223333");
+	ft_putstr("00000011222223333");
 	while (list)
 	{
 		if (!find_fit(map->map, map->size, list, x, y))
 		{
-		printf("can't place %c\n",list->letter);
+			ft_putstr("here does work");
 			list->x = 0;
 			list->y = 0;
 			if (list->letter == 'A')
 				return solve_map(new_map(map->size + 1),head, head->x, head->y);
 			remove_onete(map->map, map->size, list->pre->letter);
 
-			return (solve_map(map, list->pre, list->pre->x + 1, list->pre->y));
+			return (solve_map(map, list->pre, list->pre->x, list->pre->y + 1));
 		}
-		printf("place %c in %d%d\n",list->letter,list->x, list->y);
+		ft_putstr("enter here or not ?????\n");
 		fill_map(map->map, list, list->x, list->y);
+		print_map(map->map, map->size);
 		list = list->next;
 	}
+	return (1);
 }
-
-
 
 
 /*
@@ -182,33 +200,46 @@ void		solve_map(tetri_map *map, tetri_list *list, int x, int y)
 int		main(int ac, char **av)
 {
 	tetri_list	*list;
-	tetri_map	*map;
+	tetri_map	*n_map;
 
 	if(ac != 2)
 		ft_exit("not valid file number");
 
 	list = ft_readfile(av[1]);
-	map = new_map(mini_sq(list));
-	printf("1111100000");
-	solve_map(map,list, list->x, list->y);
-	/*
+	n_map = new_map(4);
+	int i = 0;
+	int j = 0;
+	while (i < 4)
+	{
+		j = 0;
+		while (j < 4)
+		{
+			ft_putchar(n_map->map[i][j]);
+			j++;
+		}
+		ft_putendl("");
+		i++;
+	}
+	printf("%d%d\n", list->x, list->y);
+	//int k = check_fill(n_map->map, 4, list, list->x, list->y);
+	//ft_putstr("not problem1111100000");
+	int p =solve_map(n_map,list, list->x, list->y);
 	printf("2222220000");
 
 
-	int	i = 0;
-	int	j = 0;
-	while (i < map->size)
+	int	a = 0;
+	int	b = 0;
+	while (a < n_map->size)
 	{
-		j = 0;
-		while (j < map->size)
+		b = 0;
+		while (b < n_map->size)
 		{
-			printf("%c",map->map[i][j]);
-			j++;
+			printf("%c",n_map->map[i][j]);
+			b++;
 		}
 		printf("\n");
-		i++;
+		a++;
 	}
-	*/
 	return (0);
 }
 
