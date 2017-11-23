@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 11:15:35 by saxiao            #+#    #+#             */
-/*   Updated: 2017/11/23 13:17:46 by saxiao           ###   ########.fr       */
+/*   Updated: 2017/11/23 18:33:31 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,51 +195,55 @@ int		solve_map(tetri_map *map, tetri_list *list)
 	head = list;
 	if (list)
 	{
-		ft_putstr("curent ");
-		ft_putchar(list->letter);
-		ft_putstr(" is in position  ");
-		ft_putnbr(list->x);
-		ft_putstr(" ");
-		ft_putnbr(list->y);
-		ft_putendl("");
+		//ft_putstr("curent ");
+		//ft_putchar(list->letter);
+		//ft_putstr(" is in position  ");
+		//ft_putnbr(list->x);
+		//ft_putstr(" ");
+		//ft_putnbr(list->y);
+		//ft_putendl("");
 		if (!find_fit(map->map, map->size, list))
 		{
-			ft_putstr("curent ");
-			ft_putchar(list->letter);
-			ft_putstr("did not find a position ");
+		//	ft_putstr("curent ");
+		//	ft_putchar(list->letter);
+		//	ft_putstr("did not find a position ");
 			list->x = 0;
 			list->y = 0;
 			if (list->letter == 'A')
-				return solve_map(new_map(map->size + 1),head);
+				return (0);
 			remove_onete(map->map, map->size, list->pre);
-			ft_putstr("previous ");
-			ft_putchar(list->pre->letter);
-			ft_putstr(" is in position  ");
-			ft_putnbr(list->pre->x);
-			ft_putstr(" ");
-			ft_putnbr(list->pre->y);
-			ft_putendl("");
+		//	ft_putstr("previous ");
+		//	ft_putchar(list->pre->letter);
+		//	ft_putstr(" is in position  ");
+		//	ft_putnbr(list->pre->x);
+		//	ft_putstr(" ");
+		//	ft_putnbr(list->pre->y);
+		//	ft_putendl("");
 
-			return (solve_map(map, list->pre));
+			list = list->pre;
 		}
-		fill_map(map->map, list);
-		print_map(map->map, map->size);
-		ft_putendl("");
-		if (!list->next)
+		else
 		{
-			//		print_map(map->map, map->size);
+		fill_map(map->map, list);
+		if (!list->next)
 			return (1);
+		/*if (!list->next)
+		{
+				print_map(map->map, map->size);
+			exit  (0);
 		}
-		ft_putstr("next ");
-		ft_putchar(list->next->letter);
-		ft_putstr(" is in position  ");
-		ft_putnbr(list->next->x);
-		ft_putstr(" ");
-		ft_putnbr(list->next->y);
-		return (solve_map(map, list->next));
+		*/
+		//ft_putstr("next ");
+		//ft_putchar(list->next->letter);
+		//ft_putstr(" is in position  ");
+		//ft_putnbr(list->next->x);
+		///ft_putstr(" ");
+		//ft_putnbr(list->next->y);
+		return (solve_map(map,list->next));
 		//print_map(map->map, map->size);
 		//	else
 	}
+}
 	return (1);
 }
 
@@ -247,6 +251,7 @@ int		main(int ac, char **av)
 {
 	tetri_list	*list;
 	tetri_map	*n_map;
+	tetri_map	*temp;
 
 	if(ac != 2)
 		ft_exit("not valid file number");
@@ -254,7 +259,14 @@ int		main(int ac, char **av)
 	n_map = new_map(mini_sq(list));
 	//int k = check_fill(n_map->map, 4, list, list->x, list->y);
 	//ft_putstr("not problem1111100000");
-	solve_map(n_map,list);
+	while (!solve_map(n_map,list))
+	{
+	temp = n_map;
+	n_map = new_map(temp->size + 1);
+	free (temp);
+	}
+				print_map(n_map->map, n_map->size);
+
 	//printf("2222220000");
 	//print_map(n_map->map, n_map->size);
 	return (0);
